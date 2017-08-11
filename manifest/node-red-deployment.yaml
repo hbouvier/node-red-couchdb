@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node-red
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: node-red
+        component: node-red
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 15
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - node-red
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: node-red
+        imagePullPolicy: Always # IfNotPresent, Always, Never
+        image: hbouvier/node-red-docker:0.17.5-slim
+        env:
+          - name: NODE_RED_STORAGE_COUCHDB_URL
+            value: http://admin:admin@couchdb:5984
+        ports:
+          - name: http
+            containerPort: 1880
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 9000
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 10
+        #   timeoutSeconds: 1
+        #   successThreshold: 1
+        #   failureThreshold: 12
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 9000
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 10
+        #   timeoutSeconds: 1
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        resources:
+          requests:
+            cpu: 250m
+            memory: 250Mi
+          limits:
+            cpu: 250m
+            memory: 250Mi

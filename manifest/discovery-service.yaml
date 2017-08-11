@@ -1,0 +1,22 @@
+# Ensures individual StatefulSet get their own DNS entries (e.g. couchdb-0.couchdb.namespace.svc.cluster.local)
+apiVersion: v1
+kind: Service
+metadata:
+  name: couchdb-discovery
+  labels:
+    app: node-red
+    component: couchdb
+spec:
+  clusterIP: None
+  ports:
+  - name: data
+    port: 5984
+  - name: local
+    port: 5986
+  - name: erlang-epmd
+    port: 4369
+  - name: erlang-dist
+    port: 9100
+  selector:
+    app: node-red
+    component: couchdb

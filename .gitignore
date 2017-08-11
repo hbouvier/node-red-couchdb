@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+
+tmp/
+manifest/configmap.yaml
+manifest/kubernetes-template-configmap.yaml
+manifest/statefulset.yaml
